@@ -10,7 +10,7 @@ license=('custom')
 depends=('wmenu' 'wl-clipboard' 'libnotify' 'curl' 'jq')
 
 source=("$pkgname-$pkgver.tar.gz::https://github.com/TohidEq/wmoji/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('3fc5cc3ad0c171af0bb3a726f97c8d6d121f8231767ba97e99e6f880c1128bbe')
+sha256sums=('SKIP')
 
 package() {
 cd "$srcdir/$pkgname-$pkgver"

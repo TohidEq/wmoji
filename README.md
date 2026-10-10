@@ -7,6 +7,29 @@ Search, select, and copy emojis to your clipboard.
 <img src="assets/wmoji-ss.png" alt="alt text" width="900">
 
 
+## Installation
+
+### Arch Linux
+
+Install from [GitHub Releases](https://github.com/TohidEq/wmoji/releases):
+
+```sh
+sudo pacman -U wmoji-1.0.0-1-any.pkg.tar.zst
+```
+
+Or build from source:
+
+```sh
+git clone https://github.com/TohidEq/wmoji.git
+cd wmoji
+makepkg -si
+```
+
+### Other distributions
+
+Download the source from [GitHub Releases](https://github.com/TohidEq/wmoji/releases) and install the dependencies listed below. See your distribution's package manager for installation instructions.
+
+
 ## Usage
 
 Run `wmoji`, search for an emoji, and press Enter to copy it.
