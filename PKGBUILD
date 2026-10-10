@@ -6,11 +6,11 @@ pkgrel=1
 pkgdesc="Minimal emoji picker for Wayland using wmenu"
 arch=('any')
 url="https://github.com/TohidEq/wmoji"
-license=('custom')
+license=('MIT')
 depends=('wmenu' 'wl-clipboard' 'libnotify' 'curl' 'jq')
 
 source=("$pkgname-$pkgver.tar.gz::https://github.com/TohidEq/wmoji/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('cd6be8e7bb9ea3358fef5ed0a66686fac02ccfefc87195918b6d802858f99e46')
 
 package() {
 cd "$srcdir/$pkgname-$pkgver"
