@@ -6,18 +6,16 @@ pkgrel=1
 pkgdesc="Minimal emoji picker for Wayland using wmenu"
 arch=('any')
 url="https://github.com/TohidEq/wmoji"
-license=('MIT')
+license=('custom')
 depends=('wmenu' 'wl-clipboard' 'libnotify' 'curl' 'jq')
 
-source=()
-sha256sums=()
+source=("$pkgname-$pkgver.tar.gz::https://github.com/TohidEq/wmoji/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('3fc5cc3ad0c171af0bb3a726f97c8d6d121f8231767ba97e99e6f880c1128bbe')
 
 package() {
-cd "$startdir"
-
+cd "$srcdir/$pkgname-$pkgver"
 
 install -d "$pkgdir/usr/lib/wmoji"
-install -d "$pkgdir/usr/bin"
 install -d "$pkgdir/usr/share/licenses/$pkgname"
 install -d "$pkgdir/usr/share/doc/$pkgname"
 
@@ -30,9 +28,6 @@ install -Dm755 src/build-items.sh \
 install -Dm755 src/update-emojis.sh \
     "$pkgdir/usr/lib/wmoji/update-emojis.sh"
 
-ln -s /usr/lib/wmoji/wmoji \
-    "$pkgdir/usr/bin/wmoji"
-
 install -Dm644 LICENSE \
     "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
@@ -42,5 +37,7 @@ install -Dm644 README.md \
 install -Dm644 wmoji-default.conf \
     "$pkgdir/usr/share/doc/$pkgname/wmoji-default.conf"
 
+install -d "$pkgdir/usr/bin"
+ln -s /usr/lib/wmoji/wmoji "$pkgdir/usr/bin/wmoji"
 
 }
