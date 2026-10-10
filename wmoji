@@ -1,0 +1,98 @@
+#!/bin/sh
+
+
+set -eu
+
+
+config_file="${XDG_CONFIG_HOME:-$HOME/.config}/wmoji/wmoji.conf"
+
+[ -f "$config_file" ] && . "$config_file"
+
+DATA_SEPARATOR="${DATA_SEPARATOR:-;;}"
+DISPLAY_SEPARATOR="${DISPLAY_SEPARATOR:-}"
+
+WMENU_NORMAL_BG="${WMENU_NORMAL_BG:-000000ff}"
+WMENU_NORMAL_FG="${WMENU_NORMAL_FG:-ffffffff}"
+WMENU_SELECTED_FG="${WMENU_SELECTED_FG:-ffffffff}"
+WMENU_SELECTED_BG="${WMENU_SELECTED_BG:-000000ff}"
+WMENU_MATCH_BG="${WMENU_MATCH_BG:-000000ff}"
+WMENU_MATCH_FG="${WMENU_MATCH_FG:-999999ff}"
+
+WMENU_PROMPT="${WMENU_PROMPT:-wmoji >}"
+WMENU_LINES="${WMENU_LINES:-39}"
+WMENU_FONT="${WMENU_FONT:-JetBriansMono NF 12}"
+WMENU_CASE_INSENSITIVE="${WMENU_CASE_INSENSITIVE:-true}"
+
+
+script_dir=$(CDPATH= cd "$(dirname "$0")" && pwd)
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/wmoji"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/wmoji"
+
+custom_file="$config_dir/custom-items.txt"
+items_file="$cache_dir/items.txt"
+emoji_file="$cache_dir/emojis.txt"
+
+
+mkdir -p "$config_dir" "$cache_dir"
+touch "$custom_file"
+
+# Initialize the menu on first run.
+if [ ! -f "$items_file" ]; then
+    if [ ! -f "$emoji_file" ]; then
+        sh "$script_dir/update-emojis.sh" || :
+    fi
+
+    sh "$script_dir/build-items.sh"
+fi
+
+
+
+if [ "$WMENU_CASE_INSENSITIVE" = true ]; then
+    case_flag='-i'
+else
+    case_flag=''
+fi
+
+
+# Display the full line, using a custom better-looking separator.
+selected_line=$(
+    sed "s/ $DATA_SEPARATOR / $DISPLAY_SEPARATOR /" "$items_file" |
+        wmenu \
+            -N "$WMENU_NORMAL_BG" \
+            -n "$WMENU_NORMAL_FG" \
+            -S "$WMENU_SELECTED_FG" \
+            -s "$WMENU_SELECTED_BG" \
+            -M "$WMENU_MATCH_BG" \
+            -m "$WMENU_MATCH_FG" \
+            -p "$WMENU_PROMPT" \
+            -l "$WMENU_LINES" \
+            -f "$WMENU_FONT" \
+            ${case_flag:+"$case_flag"}
+) || exit 0
+
+# Exit if the user pressed Escape.
+[ -n "$selected_line" ] || exit 0
+
+# Extract only the value.
+selected=$(printf '%s\n' "$selected_line" |
+    sed "s/ $DISPLAY_SEPARATOR .*//")
+
+case "$selected" in
+    "Custom Items")
+        "${VISUAL:-${EDITOR:-vi}}" "$custom_file"
+        sh "$script_dir/build-items.sh"
+        ;;
+
+    "Update Emojis")
+        if sh "$script_dir/update-emojis.sh"; then
+            sh "$script_dir/build-items.sh"
+        fi
+        ;;
+
+    *)
+        #printf '%s\n' "$selected"
+        wl-copy "$selected"
+        notify-send "Wmoji $DISPLAY_SEPARATOR $selected" "Use Ctrl+V to paste $selected"
+        ;;
+esac
