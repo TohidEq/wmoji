@@ -24,7 +24,7 @@ WMENU_FONT="${WMENU_FONT:-JetBriansMono NF 12}"
 WMENU_CASE_INSENSITIVE="${WMENU_CASE_INSENSITIVE:-true}"
 
 
-script_dir=$(CDPATH= cd "$(dirname "$0")" && pwd)
+script_dir=$(CDPATH= cd "$(dirname "$(readlink -f "$0")")" && pwd)
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/wmoji"
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/wmoji"
